@@ -43,41 +43,85 @@
   text-align: right;
 }
 
+/* Title + index grouped on one side */
+.showcase-lead {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.4rem;
+}
+.showcase--right .showcase-lead {
+  align-items: flex-end;
+}
+
 .showcase-title {
   font-size: clamp(2.4rem, 7vw, 5.5rem);
 }
 
-.showcase-numeral {
-  position: absolute;
-  top: -1.5rem;
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-  color: var(--teal);
+/* Small "Nº 101" index marker above the title */
+.showcase-index {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 2px solid var(--teal);
 }
-.showcase--left .showcase-numeral { right: 4.5rem; }
-.showcase--right .showcase-numeral { left: 4.5rem; }
+.showcase-index-no {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.showcase-index-num {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-style: normal;
+  color: var(--teal);
+  letter-spacing: 0.04em;
+}
 
 .showcase-arrow {
   flex-shrink: 0;
   border-color: rgba(255, 255, 255, 0.4);
 }
 
+/* Oversized outlined ghost numeral on the opposite edge */
+.showcase-ghost {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  font-size: clamp(7rem, 22vw, 18rem);
+  line-height: 0.75;
+  font-style: italic;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(24, 192, 200, 0.45);
+  pointer-events: none;
+  user-select: none;
+}
+.showcase--left .showcase-ghost { right: clamp(1rem, 4vw, 4rem); }
+.showcase--right .showcase-ghost { left: clamp(1rem, 4vw, 4rem); }
+
 @media (max-width: 640px) {
   .showcase {
     min-height: 56vh;
   }
-  .showcase-inner,
-  .showcase--right .showcase-inner {
-    flex-direction: column;
+  .showcase-lead,
+  .showcase--right .showcase-lead {
     align-items: flex-start;
-    text-align: left;
-    justify-content: flex-end;
-    gap: 1.25rem;
-    padding-block: 2.5rem;
   }
-  .showcase-numeral {
-    position: static;
-    order: -1;
+  .showcase-ghost {
+    top: clamp(1.5rem, 6vw, 3rem);
+    transform: none;
+    font-size: clamp(5rem, 30vw, 9rem);
+    opacity: 0.7;
   }
-  .showcase--left .showcase-numeral,
-  .showcase--right .showcase-numeral { right: auto; left: auto; }
+  .showcase--left .showcase-ghost,
+  .showcase--right .showcase-ghost {
+    right: 1rem;
+    left: auto;
+  }
 }
