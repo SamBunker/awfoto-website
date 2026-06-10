@@ -2,7 +2,8 @@
 # In production these are set in the Cloudflare Pages dashboard
 # (Settings → Environment variables). Never commit real keys.
 
-SENDGRID_API_KEY=SG.your-sendgrid-api-key
+CF_ACCOUNT_ID=your-cloudflare-account-id
+CF_EMAIL_TOKEN=your-email-sending-api-token
 CONTACT_TO=andrew@awdesignfoto.com
 CONTACT_FROM=noreply@awdesignfoto.com
 CONTACT_TO_NAME=Andrew Williams

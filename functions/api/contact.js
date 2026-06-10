@@ -1,11 +1,14 @@
 // Cloudflare Pages Function — POST /api/contact
-// Receives the contact form and relays it through the SendGrid v3 REST API.
+// Relays the contact form through the Cloudflare Email Sending REST API.
+// (Pages Functions can't use the native send_email binding — that's Workers
+// only — so we call the REST endpoint with a scoped API token.)
 //
-// Required environment variables (set in the Cloudflare Pages dashboard →
-// Settings → Environment variables; mark SENDGRID_API_KEY as a Secret):
-//   SENDGRID_API_KEY  - SendGrid API key with "Mail Send" permission
-//   CONTACT_TO        - inbox that receives submissions (e.g. andrew@awdesignfoto.com)
-//   CONTACT_FROM      - a SendGrid *verified* sender address (e.g. noreply@awdesignfoto.com)
+// Required environment variables (Cloudflare Pages dashboard →
+// Settings → Environment variables; mark CF_EMAIL_TOKEN as a Secret):
+//   CF_ACCOUNT_ID   - your Cloudflare account ID
+//   CF_EMAIL_TOKEN  - API token with the "Email Sending: Send" permission
+//   CONTACT_TO      - inbox that receives submissions
+//   CONTACT_FROM    - sender on a domain onboarded to Email Sending
 // Optional:
 //   CONTACT_TO_NAME   - display name for the recipient
 //   CONTACT_FROM_NAME - display name for the sender (default "AW Design & Foto")
@@ -49,48 +52,42 @@ export async function onRequest({ request, env }) {
   if (!message || message.length < 5) return json({ ok: false, error: 'Please enter a message.' }, 400);
   if (message.length > 5000) return json({ ok: false, error: 'That message is a bit too long.' }, 400);
 
-  if (!env.SENDGRID_API_KEY || !env.CONTACT_TO || !env.CONTACT_FROM) {
+  if (!env.CF_ACCOUNT_ID || !env.CF_EMAIL_TOKEN || !env.CONTACT_TO || !env.CONTACT_FROM) {
     return json({ ok: false, error: 'Email is not configured yet.' }, 500);
   }
 
-  const sgBody = {
-    personalizations: [
-      {
-        to: [{ email: env.CONTACT_TO, name: env.CONTACT_TO_NAME || undefined }],
-        subject: `New message from ${name} — AW Design & Foto`,
-      },
-    ],
-    from: { email: env.CONTACT_FROM, name: env.CONTACT_FROM_NAME || 'AW Design & Foto' },
-    reply_to: { email, name },
-    content: [
-      {
-        type: 'text/plain',
-        value: `Name: ${name}\nEmail: ${email}\n\n${message}`,
-      },
-      {
-        type: 'text/html',
-        value:
-          `<h2>New website message</h2>` +
-          `<p><strong>Name:</strong> ${escapeHtml(name)}</p>` +
-          `<p><strong>Email:</strong> ${escapeHtml(email)}</p>` +
-          `<p><strong>Message:</strong></p>` +
-          `<p style="white-space:pre-wrap">${escapeHtml(message)}</p>`,
-      },
-    ],
+  const body = {
+    to: env.CONTACT_TO_NAME
+      ? { address: env.CONTACT_TO, name: env.CONTACT_TO_NAME }
+      : env.CONTACT_TO,
+    from: { address: env.CONTACT_FROM, name: env.CONTACT_FROM_NAME || 'AW Design & Foto' },
+    reply_to: { address: email, name },
+    subject: `New message from ${name} — AW Design & Foto`,
+    text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
+    html:
+      `<h2>New website message</h2>` +
+      `<p><strong>Name:</strong> ${escapeHtml(name)}</p>` +
+      `<p><strong>Email:</strong> ${escapeHtml(email)}</p>` +
+      `<p><strong>Message:</strong></p>` +
+      `<p style="white-space:pre-wrap">${escapeHtml(message)}</p>`,
   };
 
-  const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.SENDGRID_API_KEY}`,
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify(sgBody),
-  });
+  const res = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT_ID}/email/sending/send`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.CF_EMAIL_TOKEN}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    }
+  );
 
-  if (!res.ok) {
-    const detail = await res.text().catch(() => '');
-    console.error('SendGrid error', res.status, detail);
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok || !data?.success) {
+    console.error('Email send failed', res.status, JSON.stringify(data?.errors || ''));
     return json({ ok: false, error: 'Could not send right now. Please try again later.' }, 502);
   }
 

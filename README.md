@@ -88,33 +88,44 @@ work cards, photography grid). Section imagery is referenced by path from
 `public/`. The two `Showcase` banners (Sports Media / Videography) are configured
 in `src/App.jsx`.
 
-### Contact form (SendGrid via Cloudflare Pages Function)
+### Contact form (Cloudflare Email Sending via Pages Function)
 
 The form (`src/components/Contact.jsx`) POSTs JSON to `/api/contact`, handled by
 the Pages Function at `functions/api/contact.js`, which relays the message
-through the SendGrid v3 API. Includes validation, a honeypot field, and
-success/error states.
+through the **Cloudflare Email Sending REST API**. Includes validation, a
+honeypot field, and success/error states.
+
+> Pages Functions can't use the native `send_email` binding (Workers only), so
+> we call Cloudflare's Email Sending REST endpoint with a scoped API token.
 
 **Setup:**
 
-1. In SendGrid, create an API key with **Mail Send** permission and verify a
-   sender (Single Sender or authenticated domain).
-2. In the Cloudflare Pages dashboard → **Settings → Environment variables**, add:
+1. **Onboard the sending domain.** Enable Email Sending for your domain (it must
+   be on Cloudflare): `npx wrangler email sending enable awdesignfoto.com`, or via
+   the dashboard. This adds the required SPF/DKIM DNS records.
+2. **Create an API token** with the **Email Sending → Send** permission
+   (dashboard → My Profile → API Tokens), and note your **Account ID**.
+3. In the Cloudflare Pages dashboard → **Settings → Environment variables**, add:
 
    | Variable | Notes |
    | --- | --- |
-   | `SENDGRID_API_KEY` | mark as **Secret** |
+   | `CF_ACCOUNT_ID` | your Cloudflare account ID |
+   | `CF_EMAIL_TOKEN` | API token (Email Sending: Send) — mark as **Secret** |
    | `CONTACT_TO` | inbox that receives submissions |
-   | `CONTACT_FROM` | a SendGrid **verified** sender address |
+   | `CONTACT_FROM` | sender on the onboarded domain |
    | `CONTACT_TO_NAME` | optional |
    | `CONTACT_FROM_NAME` | optional (default "AW Design & Foto") |
 
-3. Redeploy so the Function picks up the variables.
+4. Redeploy so the Function picks up the variables.
 
 **Local testing:** copy `.dev.vars.example` → `.dev.vars`, fill in values, then
 `npm run pages:dev` (builds and serves via `wrangler pages dev`, which runs the
 Function locally). The plain `npm run dev` (Vite) does **not** run Functions, so
 the form will get a 405 there — use `pages:dev` to test email end to end.
+
+**Fallback:** if you'd rather not run a backend, revert `Contact.jsx`'s submit
+handler to a `mailto:` link (see git history) — no service required, but it opens
+the visitor's mail client instead of sending directly.
 
 ## Fonts
 
