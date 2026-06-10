@@ -1,0 +1,10 @@
+{
+  // Cloudflare Pages configuration.
+  // Docs: https://developers.cloudflare.com/pages/functions/wrangler-configuration/
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "awfoto-website",
+  "compatibility_date": "2026-06-09",
+  // Vite outputs the built static site here; Pages serves it and
+  // auto-detects the adjacent `functions/` directory for Pages Functions.
+  "pages_build_output_dir": "dist"
+}
