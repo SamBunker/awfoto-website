@@ -1,0 +1,13 @@
+.contact {
+  background: var(--bg-alt);
+}
+
+.contact-inner {
+  text-align: center;
+  max-width: 600px;
+}
+
+.contact-text {
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+}

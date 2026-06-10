@@ -1,0 +1,30 @@
+.about-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.about-photo {
+  aspect-ratio: 3 / 4;
+  background: repeating-linear-gradient(
+    45deg,
+    #1a1a1a,
+    #1a1a1a 12px,
+    #1f1f1f 12px,
+    #1f1f1f 24px
+  );
+  border: 1px solid var(--border);
+}
+
+.about-text p {
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  max-width: 52ch;
+}
+
+@media (max-width: 768px) {
+  .about-inner {
+    grid-template-columns: 1fr;
+  }
+}
