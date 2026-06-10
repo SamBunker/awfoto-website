@@ -2,10 +2,11 @@
 // Swap copy, links, and image paths here without touching components.
 
 export const NAV_LINKS = [
-  { label: 'Sports Media', href: '#sports-media' },
-  { label: 'Videography', href: '#videography' },
-  { label: 'Photography', href: '#photography' },
-  { label: 'Contact Me', href: '#contact', cta: true },
+  { label: 'Sports Media', to: '/sports-media' },
+  { label: 'Videography', to: '/videography' },
+  { label: 'Photography', to: '/photography' },
+  { label: 'Archive', to: '/archive' },
+  { label: 'Contact Me', to: '/#contact', cta: true },
 ];
 
 export const SOCIALS = [

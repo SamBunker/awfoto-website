@@ -1,40 +1,25 @@
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import MostRecent from './components/MostRecent';
-import Showcase from './components/Showcase';
-import Photography from './components/Photography';
-import About from './components/About';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import CategoryPage from './pages/CategoryPage';
+import PostPage from './pages/PostPage';
+import ArchivePage from './pages/ArchivePage';
+import NotFound from './pages/NotFound';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <Navbar />
-      <main>
-        <Hero />
-        <MostRecent />
-        <Showcase
-          id="sports-media"
-          title="Sports Media"
-          numeral="101"
-          image="/sports-media.jpg"
-          align="left"
-        />
-        <Showcase
-          id="videography"
-          title="Videography"
-          numeral="202"
-          image="/videography.jpg"
-          align="right"
-        />
-        <Photography />
-        <About />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="archive" element={<ArchivePage />} />
+          <Route path=":category" element={<CategoryPage />} />
+          <Route path=":category/:slug" element={<PostPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

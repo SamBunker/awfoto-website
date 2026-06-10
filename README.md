@@ -7,10 +7,53 @@ GitHub → Cloudflare Pages.
 Bold black + electric-teal athletic editorial design, bilingual English/German
 accents (Über Mich · Glaube · Bereit Für Den Sieg).
 
-## Sections
+## Sections (home)
 
 Navbar → Hero → Most Recent → Sports Media (101) → Videography (202) →
 Photography (303) → About Me / My Faith → Get in Touch → Footer.
+
+## Pages & routing
+
+Client-side routing via `react-router-dom`:
+
+| Route | Page |
+| --- | --- |
+| `/` | Home (landing) |
+| `/sports-media`, `/videography`, `/photography` | Category listing |
+| `/:category/:slug` | Post / article / gallery detail |
+| `/archive` | Combined feed of all posts (filterable) |
+| `*` | 404 |
+
+`public/_redirects` (`/* /index.html 200`) gives Cloudflare Pages the SPA
+fallback so deep links resolve.
+
+## Content (CMS) — file-based Markdown
+
+Posts are Markdown files in `src/content/<category>/<slug>.md`, loaded at build
+time via Vite `import.meta.glob` and rendered with `marked`. The filename is the
+URL slug; the folder is the category. Add a post by dropping in a new `.md`:
+
+```markdown
+---
+title: Game Day Recap
+date: 2025-05-01
+excerpt: One-line summary shown on cards and the post lede.
+cover: /some-image.jpg
+tags: [Recap, Volleyball]
+featured: true
+video: https://www.youtube.com/embed/VIDEO_ID   # videography only
+images:                                          # photography galleries
+  - /photography-1.jpg
+  - /photography-2.jpg
+---
+
+Markdown body. Supports headings, **bold**, _italics_, lists, > quotes, links.
+```
+
+- **Sports Media / Videography** → article layout (video embed if `video` is set).
+- **Photography** → gallery layout with a click-to-open lightbox (from `images`).
+- Categories/numerals/blurbs live in `src/content/categories.js`.
+- Images go in `public/` and are referenced by absolute path (`/name.jpg`).
 
 ## Development
 
@@ -26,13 +69,16 @@ npm run lint     # eslint
 
 ```
 src/
-  components/   Navbar · Logo · Hero · MostRecent · Showcase · Photography ·
-                About · Contact · Footer · Reveal (scroll-in) · icons
-  styles/       one CSS file per component + common.css
-  data/         siteData.js — nav, socials, recent work, photography list
-  App.jsx       composes the page
+  pages/        Home · CategoryPage · PostPage · ArchivePage · NotFound
+  components/    Layout · Navbar · Logo · Hero · MostRecent · Showcase ·
+                Photography · About · Contact · Footer · PostCard · Lightbox ·
+                Reveal · ScrollToTop · icons
+  content/      Markdown posts by category + loader.js + categories.js
+  styles/       one CSS file per component/page + common.css
+  data/         siteData.js — nav, socials, home photography teaser list
+  App.jsx       router + routes
   main.jsx      entry point
-public/         images + assets served at root
+public/         images + assets served at root, _redirects (SPA fallback)
 ```
 
 ## Editing content

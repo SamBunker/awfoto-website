@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { NAV_LINKS } from '../data/siteData';
 import Logo from './Logo';
 import '../styles/Navbar.css';
@@ -24,19 +25,19 @@ function Navbar() {
   return (
     <header className={`navbar ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="navbar-inner container">
-        <a href="#top" className="navbar-brand" aria-label="AW Design & Foto home">
+        <Link to="/" className="navbar-brand" aria-label="AW Design & Foto home">
           <Logo est />
-        </a>
+        </Link>
 
         <nav className="navbar-links" aria-label="Primary">
           {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
+            <Link
+              key={link.to}
+              to={link.to}
               className={link.cta ? 'navbar-cta' : 'navbar-link'}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -55,15 +56,15 @@ function Navbar() {
       <div className={`navbar-drawer ${open ? 'is-open' : ''}`}>
         <nav aria-label="Mobile">
           {NAV_LINKS.map((link, i) => (
-            <a
-              key={link.href}
-              href={link.href}
+            <Link
+              key={link.to}
+              to={link.to}
               onClick={() => setOpen(false)}
               style={{ transitionDelay: open ? `${80 + i * 60}ms` : '0ms' }}
             >
               <span className="navbar-drawer-index">0{i + 1}</span>
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
       </div>

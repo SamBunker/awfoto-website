@@ -1,13 +1,14 @@
+import { Link } from 'react-router-dom';
 import { SOCIALS } from '../data/siteData';
 import Logo from './Logo';
 import '../styles/Footer.css';
 
 const FOOTER_LINKS = [
-  { label: 'Most Recent', href: '#recent' },
-  { label: 'Sports Media', href: '#sports-media' },
-  { label: 'Videography', href: '#videography' },
-  { label: 'Photography', href: '#photography' },
-  { label: 'The Archive', href: '#' },
+  { label: 'Sports Media', to: '/sports-media' },
+  { label: 'Videography', to: '/videography' },
+  { label: 'Photography', to: '/photography' },
+  { label: 'The Archive', to: '/archive' },
+  { label: 'Contact', to: '/#contact' },
 ];
 
 function Footer() {
@@ -15,14 +16,14 @@ function Footer() {
     <footer className="footer">
       <div className="container footer-grid">
         <div className="footer-brand">
-          <Logo />
+          <Link to="/"><Logo /></Link>
         </div>
 
         <nav className="footer-col" aria-label="Footer">
           <h4>Links</h4>
           <ul>
             {FOOTER_LINKS.map((l) => (
-              <li key={l.label}><a href={l.href}>{l.label}</a></li>
+              <li key={l.label}><Link to={l.to}>{l.label}</Link></li>
             ))}
           </ul>
         </nav>

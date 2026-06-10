@@ -56,6 +56,13 @@
   align-items: flex-end;
 }
 
+.showcase-title-link {
+  display: inline-block;
+  transition: color 0.25s ease;
+}
+.showcase-title-link:hover {
+  color: var(--teal);
+}
 .showcase-title {
   font-size: clamp(2.4rem, 7vw, 5.5rem);
 }

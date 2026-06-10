@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom';
 import { PHOTOGRAPHY } from '../data/siteData';
+import { ArrowRight } from './icons';
 import Reveal from './Reveal';
 import '../styles/Photography.css';
 
@@ -11,8 +13,11 @@ function Photography() {
             <p className="kicker">Stills &amp; Frames</p>
             <h2 className="display photography-title">Photography</h2>
           </Reveal>
-          <Reveal as="span" className="numeral photography-numeral" delay={120}>
-            303
+          <Reveal className="photography-head-right" delay={120}>
+            <span className="numeral photography-numeral">303</span>
+            <Link to="/photography" className="arrow-btn" aria-label="View all photography">
+              <ArrowRight />
+            </Link>
           </Reveal>
         </div>
       </div>

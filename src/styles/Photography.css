@@ -15,6 +15,11 @@
   margin-top: 1rem;
 }
 
+.photography-head-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
 .photography-numeral {
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   color: var(--teal);

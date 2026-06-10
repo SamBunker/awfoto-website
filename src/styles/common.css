@@ -122,6 +122,32 @@
   height: 20px;
 }
 
+/* Routed page wrapper — clears the fixed navbar */
+.page {
+  padding-top: calc(var(--nav-h) + clamp(2rem, 5vw, 4rem));
+  padding-bottom: clamp(4rem, 9vw, 8rem);
+  min-height: 100vh;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-heading);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted-dim);
+  margin-bottom: 1.6rem;
+}
+.breadcrumb a {
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+.breadcrumb a:hover { color: var(--teal); }
+.breadcrumb-sep { color: var(--line); }
+.breadcrumb-current { color: var(--teal); }
+
 /* Scroll reveal */
 .reveal {
   opacity: 0;
