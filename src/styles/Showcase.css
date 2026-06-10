@@ -1,0 +1,83 @@
+.showcase {
+  position: relative;
+  min-height: clamp(320px, 52vh, 540px);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-block: 1px solid var(--line);
+}
+
+.showcase-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.showcase:hover .showcase-bg {
+  transform: scale(1.05);
+}
+
+.showcase-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(6, 8, 8, 0.92) 0%, rgba(6, 8, 8, 0.45) 45%, rgba(6, 8, 8, 0.15) 100%);
+}
+.showcase--right .showcase-veil {
+  background:
+    linear-gradient(270deg, rgba(6, 8, 8, 0.92) 0%, rgba(6, 8, 8, 0.45) 45%, rgba(6, 8, 8, 0.15) 100%);
+}
+
+.showcase-inner {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.showcase--right .showcase-inner {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.showcase-title {
+  font-size: clamp(2.4rem, 7vw, 5.5rem);
+}
+
+.showcase-numeral {
+  position: absolute;
+  top: -1.5rem;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  color: var(--teal);
+}
+.showcase--left .showcase-numeral { right: 4.5rem; }
+.showcase--right .showcase-numeral { left: 4.5rem; }
+
+.showcase-arrow {
+  flex-shrink: 0;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 640px) {
+  .showcase {
+    min-height: 56vh;
+  }
+  .showcase-inner,
+  .showcase--right .showcase-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    justify-content: flex-end;
+    gap: 1.25rem;
+    padding-block: 2.5rem;
+  }
+  .showcase-numeral {
+    position: static;
+    order: -1;
+  }
+  .showcase--left .showcase-numeral,
+  .showcase--right .showcase-numeral { right: auto; left: auto; }
+}

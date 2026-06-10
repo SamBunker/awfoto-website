@@ -1,0 +1,38 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.logo-mark {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 0.85;
+}
+
+.logo-aw {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 1.7rem;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+.logo-tag {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-top: 0.18rem;
+}
+
+.logo-est {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--muted);
+  border-left: 1px solid var(--line);
+  padding-left: 0.9rem;
+}

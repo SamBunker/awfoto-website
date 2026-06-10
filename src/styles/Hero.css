@@ -1,38 +1,179 @@
 .hero {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 6rem 1.5rem 4rem;
+  padding-top: var(--nav-h);
+  overflow: hidden;
   background:
-    radial-gradient(ellipse at center, rgba(201, 167, 107, 0.08), transparent 60%),
-    var(--bg);
+    radial-gradient(120% 90% at 100% 50%, rgba(24, 192, 200, 0.10), transparent 55%),
+    linear-gradient(180deg, #0b0d0d 0%, var(--bg) 100%);
+}
+
+.hero-grid {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
 }
 
 .hero-content {
-  max-width: 640px;
-}
-
-.hero-eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  font-size: 0.75rem;
-  color: var(--accent);
-  margin-bottom: 1.25rem;
+  padding-block: 3rem;
 }
 
 .hero-title {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  font-size: clamp(3rem, 12vw, 6rem);
-  line-height: 1;
-  letter-spacing: 0.04em;
-  margin-bottom: 1.5rem;
+  font-size: clamp(3.4rem, 9.5vw, 8rem);
+  margin-top: 1.4rem;
+  margin-bottom: 1.2rem;
+}
+.hero-title span {
+  display: block;
 }
 
-.hero-tagline {
-  color: var(--text-muted);
-  font-size: 1.05rem;
-  margin-bottom: 2.5rem;
+.hero-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+}
+.hero-divider::before,
+.hero-divider::after {
+  content: '';
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--teal), transparent);
+}
+.hero-divider::before { width: 40px; }
+.hero-divider::after { flex: 1; }
+.hero-divider .fraktur {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+}
+
+.hero-copy {
+  color: var(--muted);
+  max-width: 46ch;
+  margin-bottom: 0.9rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Figure / portrait */
+.hero-figure {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 60vh;
+}
+.hero-figure-glow {
+  position: absolute;
+  inset: 8% 4% 0 4%;
+  background: radial-gradient(60% 65% at 50% 45%, rgba(24, 192, 200, 0.28), transparent 70%);
+  filter: blur(6px);
+  z-index: 0;
+}
+.hero-portrait {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.6));
+  animation: hero-rise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.2s;
+}
+.hero-figure-est {
+  position: absolute;
+  top: 12%;
+  right: 0;
+  z-index: 2;
+  writing-mode: vertical-rl;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* Scroll cue */
+.hero-scroll {
+  position: absolute;
+  left: clamp(1.25rem, 4vw, 3rem);
+  bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+.hero-scroll-line {
+  width: 60px;
+  height: 1px;
+  background: var(--muted-dim);
+  position: relative;
+  overflow: hidden;
+}
+.hero-scroll-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--teal);
+  animation: scroll-sweep 1.8s ease-in-out infinite;
+}
+
+/* Entrance animations */
+.hero-anim {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: hero-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes hero-rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes scroll-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-anim, .hero-portrait { animation: none; opacity: 1; transform: none; }
+  .hero-scroll-line::after { animation: none; }
+}
+
+@media (max-width: 860px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .hero-figure {
+    order: -1;
+    min-height: auto;
+    margin-top: 1rem;
+  }
+  .hero-portrait {
+    max-width: 320px;
+  }
+  .hero-content {
+    padding-block: 1.5rem 4rem;
+  }
+  .hero-figure-est { display: none; }
+  .hero-scroll { display: none; }
 }

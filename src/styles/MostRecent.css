@@ -1,0 +1,99 @@
+.recent-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2.6rem;
+}
+
+.recent-title {
+  font-size: clamp(1.9rem, 5vw, 3rem);
+}
+
+.recent-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.2rem);
+}
+
+.recent-card-link {
+  display: block;
+}
+
+.recent-card-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid var(--teal-deep);
+  background: var(--bg-card);
+}
+.recent-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.recent-card:hover .recent-card-media img {
+  transform: scale(1.05);
+}
+.recent-card-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, 0.45));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.recent-card:hover .recent-card-media::after {
+  opacity: 1;
+}
+
+.recent-card-play {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(10, 12, 12, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+  backdrop-filter: blur(4px);
+  transform: scale(0.85);
+  opacity: 0;
+  transition: transform 0.35s ease, opacity 0.35s ease, background 0.25s ease;
+}
+.recent-card-play svg { width: 26px; height: 26px; margin-left: 3px; }
+.recent-card:hover .recent-card-play {
+  opacity: 1;
+  transform: scale(1);
+}
+.recent-card-play:hover { background: var(--teal); }
+
+.recent-card-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 1.25;
+  margin-top: 1.1rem;
+  transition: color 0.2s ease;
+}
+.recent-card:hover .recent-card-title {
+  color: var(--teal);
+}
+
+.recent-card-date {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-top: 0.35rem;
+}
+
+@media (max-width: 720px) {
+  .recent-grid {
+    grid-template-columns: 1fr;
+  }
+}
