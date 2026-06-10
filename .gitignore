@@ -1,9 +1,11 @@
 node_modules/
 dist/
 .env
+.dev.vars
 *.local
 .DS_Store
 _private/
+.wrangler/
 
 # Stray nested clone (safe to delete the awfoto-website/ subfolder manually)
 /awfoto-website/

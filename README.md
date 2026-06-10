@@ -88,11 +88,33 @@ work cards, photography grid). Section imagery is referenced by path from
 `public/`. The two `Showcase` banners (Sports Media / Videography) are configured
 in `src/App.jsx`.
 
-### Contact form
+### Contact form (SendGrid via Cloudflare Pages Function)
 
-`src/components/Contact.jsx` currently composes an email via the visitor's mail
-client (`mailto:`). To capture submissions server-side, point it at a Formspree
-endpoint or a Cloudflare Pages Function. Update `CONTACT_EMAIL` there.
+The form (`src/components/Contact.jsx`) POSTs JSON to `/api/contact`, handled by
+the Pages Function at `functions/api/contact.js`, which relays the message
+through the SendGrid v3 API. Includes validation, a honeypot field, and
+success/error states.
+
+**Setup:**
+
+1. In SendGrid, create an API key with **Mail Send** permission and verify a
+   sender (Single Sender or authenticated domain).
+2. In the Cloudflare Pages dashboard → **Settings → Environment variables**, add:
+
+   | Variable | Notes |
+   | --- | --- |
+   | `SENDGRID_API_KEY` | mark as **Secret** |
+   | `CONTACT_TO` | inbox that receives submissions |
+   | `CONTACT_FROM` | a SendGrid **verified** sender address |
+   | `CONTACT_TO_NAME` | optional |
+   | `CONTACT_FROM_NAME` | optional (default "AW Design & Foto") |
+
+3. Redeploy so the Function picks up the variables.
+
+**Local testing:** copy `.dev.vars.example` → `.dev.vars`, fill in values, then
+`npm run pages:dev` (builds and serves via `wrangler pages dev`, which runs the
+Function locally). The plain `npm run dev` (Vite) does **not** run Functions, so
+the form will get a 405 there — use `pages:dev` to test email end to end.
 
 ## Fonts
 

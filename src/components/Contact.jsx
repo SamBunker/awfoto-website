@@ -3,22 +3,40 @@ import { SOCIALS } from '../data/siteData';
 import { ArrowRight, ArrowUpRight } from './icons';
 import '../styles/Contact.css';
 
-// Where contact submissions go. Swap to a Formspree / Cloudflare endpoint later;
-// for now it composes an email via the visitor's mail client.
-const CONTACT_EMAIL = 'hello@awdesignfoto.com';
+const EMPTY = { name: '', email: '', message: '', company: '' };
 
 function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [form, setForm] = useState(EMPTY);
+  const [status, setStatus] = useState('idle'); // idle | sending | success | error
+  const [error, setError] = useState('');
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const subject = encodeURIComponent(`New message from ${form.name || 'the website'}`);
-    const body = encodeURIComponent(
-      `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`
-    );
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    if (status === 'sending') return;
+    setStatus('sending');
+    setError('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.ok) {
+        setStatus('success');
+        setForm(EMPTY);
+      } else {
+        setStatus('error');
+        setError(data.error || 'Something went wrong. Please try again.');
+      }
+    } catch {
+      setStatus('error');
+      setError('Network error. Please check your connection and try again.');
+    }
   };
 
   return (
@@ -52,31 +70,51 @@ function Contact() {
           </p>
         </div>
 
-        <form className="contact-form" onSubmit={handleSubmit}>
-          <div className="field-row">
-            <div className="field">
-              <label htmlFor="cf-name">Name <span>*</span></label>
-              <input id="cf-name" type="text" required placeholder="Who are you?"
-                value={form.name} onChange={update('name')} />
+        {status === 'success' ? (
+          <div className="contact-success" role="status">
+            <span className="contact-success-mark" aria-hidden="true">✓</span>
+            <h4>Message sent.</h4>
+            <p>Thanks for reaching out — I'll get back to you soon.</p>
+            <button type="button" className="btn btn--ghost" onClick={() => setStatus('idle')}>
+              Send another
+            </button>
+          </div>
+        ) : (
+          <form className="contact-form" onSubmit={handleSubmit} noValidate>
+            <div className="field-row">
+              <div className="field">
+                <label htmlFor="cf-name">Name <span>*</span></label>
+                <input id="cf-name" type="text" required placeholder="Who are you?"
+                  autoComplete="name" value={form.name} onChange={update('name')} />
+              </div>
+
+              <div className="field">
+                <label htmlFor="cf-email">Email Address <span>*</span></label>
+                <input id="cf-email" type="email" required placeholder="Where do we reply?"
+                  autoComplete="email" value={form.email} onChange={update('email')} />
+              </div>
             </div>
 
             <div className="field">
-              <label htmlFor="cf-email">Email Address <span>*</span></label>
-              <input id="cf-email" type="email" required placeholder="Where do we reply?"
-                value={form.email} onChange={update('email')} />
+              <label htmlFor="cf-message">Message <span>*</span></label>
+              <textarea id="cf-message" rows="4" required placeholder="Tell the story..."
+                value={form.message} onChange={update('message')} />
             </div>
-          </div>
 
-          <div className="field">
-            <label htmlFor="cf-message">Message <span>*</span></label>
-            <textarea id="cf-message" rows="4" required placeholder="Tell the story..."
-              value={form.message} onChange={update('message')} />
-          </div>
+            {/* Honeypot — hidden from humans, catches bots */}
+            <div className="contact-hp" aria-hidden="true">
+              <label htmlFor="cf-company">Company</label>
+              <input id="cf-company" type="text" tabIndex={-1} autoComplete="off"
+                value={form.company} onChange={update('company')} />
+            </div>
 
-          <button type="submit" className="btn contact-submit">
-            Send Message <ArrowUpRight />
-          </button>
-        </form>
+            {status === 'error' && <p className="contact-error" role="alert">{error}</p>}
+
+            <button type="submit" className="btn contact-submit" disabled={status === 'sending'}>
+              {status === 'sending' ? 'Sending…' : <>Send Message <ArrowUpRight /></>}
+            </button>
+          </form>
+        )}
       </div>
     </section>
   );

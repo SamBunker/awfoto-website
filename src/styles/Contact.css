@@ -151,6 +151,52 @@
 .contact-submit {
   margin-top: 0.6rem;
 }
+.contact-submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+  transform: none;
+}
+
+/* Honeypot — visually hidden but not display:none (bots skip those) */
+.contact-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-error {
+  color: #ff8a8a;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.contact-success {
+  max-width: 620px;
+}
+.contact-success-mark {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #04211f;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+.contact-success h4 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.6rem;
+  margin-bottom: 0.6rem;
+}
+.contact-success p {
+  color: var(--muted);
+  margin-bottom: 1.8rem;
+}
 
 @media (max-width: 820px) {
   .contact {
