@@ -26,20 +26,17 @@
   padding-inline: clamp(1.25rem, 4vw, 3rem);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 220px;
   gap: 14px;
 }
 
-/* Editorial rhythm: a couple of feature tiles span larger areas */
+/* Equal square tiles that fill the grid perfectly */
 .photography-item {
   position: relative;
   overflow: hidden;
+  aspect-ratio: 1 / 1;
   background: var(--bg-card);
   border: 1px solid var(--line);
 }
-.photography-item:nth-child(1) { grid-row: span 2; }
-.photography-item:nth-child(6) { grid-column: span 2; }
-.photography-item:nth-child(8) { grid-row: span 2; }
 
 .photography-item img {
   width: 100%;

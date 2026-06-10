@@ -43,25 +43,33 @@ function Contact() {
       </div>
 
       <div className="contact-main">
-        <p className="fraktur contact-fraktur">Bereit Für Den Sieg</p>
-        <h3 className="display contact-heading">Drop a<br />Message</h3>
+        <div className="contact-headings">
+          <p className="fraktur contact-fraktur">Bereit Für Den Sieg</p>
+          <h3 className="display contact-heading">Drop a Message</h3>
+          <p className="contact-lede">
+            Got a game to cover, a story to tell, or a project in mind? Send the
+            details and let's make something worth remembering.
+          </p>
+        </div>
 
         <form className="contact-form" onSubmit={handleSubmit}>
-          <div className="field">
-            <label htmlFor="cf-name">Name <span>*</span></label>
-            <input id="cf-name" type="text" required placeholder="Who are you?"
-              value={form.name} onChange={update('name')} />
-          </div>
+          <div className="field-row">
+            <div className="field">
+              <label htmlFor="cf-name">Name <span>*</span></label>
+              <input id="cf-name" type="text" required placeholder="Who are you?"
+                value={form.name} onChange={update('name')} />
+            </div>
 
-          <div className="field">
-            <label htmlFor="cf-email">Email Address <span>*</span></label>
-            <input id="cf-email" type="email" required placeholder="Where do we reply?"
-              value={form.email} onChange={update('email')} />
+            <div className="field">
+              <label htmlFor="cf-email">Email Address <span>*</span></label>
+              <input id="cf-email" type="email" required placeholder="Where do we reply?"
+                value={form.email} onChange={update('email')} />
+            </div>
           </div>
 
           <div className="field">
             <label htmlFor="cf-message">Message <span>*</span></label>
-            <textarea id="cf-message" rows="3" required placeholder="Tell the story..."
+            <textarea id="cf-message" rows="4" required placeholder="Tell the story..."
               value={form.message} onChange={update('message')} />
           </div>
 
