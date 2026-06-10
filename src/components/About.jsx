@@ -54,7 +54,6 @@ function About() {
           </div>
 
           <Reveal className="about-figure" delay={140}>
-            <span className="about-figure-frame" aria-hidden="true" />
             <img src="/andrew-photo.webp" alt="Andrew Williams with his family" loading="lazy" />
           </Reveal>
         </div>
