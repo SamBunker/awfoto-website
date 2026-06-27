@@ -42,7 +42,12 @@ function Contact() {
   return (
     <section id="contact" className="contact">
       <div className="contact-aside">
-        <h2 className="display contact-aside-title">Get in Touch</h2>
+        <div className="contact-aside-header">
+          <p className="contact-aside-kicker">Get in Touch</p>
+          <h2 className="display contact-aside-title">Let's Talk.</h2>
+        </div>
+
+        <hr className="contact-aside-divider" />
 
         <div className="contact-socials">
           {SOCIALS.map((s) => (

@@ -2,9 +2,8 @@
 # In production these are set in the Cloudflare Pages dashboard
 # (Settings → Environment variables). Never commit real keys.
 
-CF_ACCOUNT_ID=your-cloudflare-account-id
-CF_EMAIL_TOKEN=your-email-sending-api-token
+RESEND_API_KEY=re_your_api_key_here
 CONTACT_TO=andrew@awdesignfoto.com
-CONTACT_FROM=noreply@awdesignfoto.com
 CONTACT_TO_NAME=Andrew Williams
+CONTACT_FROM=noreply@sambunker.com
 CONTACT_FROM_NAME=AW Design & Foto

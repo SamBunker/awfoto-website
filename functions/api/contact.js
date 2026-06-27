@@ -1,16 +1,13 @@
 // Cloudflare Pages Function — POST /api/contact
-// Relays the contact form through the Cloudflare Email Sending REST API.
-// (Pages Functions can't use the native send_email binding — that's Workers
-// only — so we call the REST endpoint with a scoped API token.)
+// Relays the contact form through the Resend API.
 //
 // Required environment variables (Cloudflare Pages dashboard →
-// Settings → Environment variables; mark CF_EMAIL_TOKEN as a Secret):
-//   CF_ACCOUNT_ID   - your Cloudflare account ID
-//   CF_EMAIL_TOKEN  - API token with the "Email Sending: Send" permission
+// Settings → Environment variables; mark RESEND_API_KEY as a Secret):
+//   RESEND_API_KEY  - API key from resend.com
 //   CONTACT_TO      - inbox that receives submissions
-//   CONTACT_FROM    - sender on a domain onboarded to Email Sending
 // Optional:
 //   CONTACT_TO_NAME   - display name for the recipient
+//   CONTACT_FROM      - sender address (must be on a Resend-verified domain)
 //   CONTACT_FROM_NAME - display name for the sender (default "AW Design & Foto")
 
 const json = (data, status = 200) =>
@@ -41,27 +38,29 @@ export async function onRequest({ request, env }) {
   const name = clean(payload.name);
   const email = clean(payload.email);
   const message = clean(payload.message);
-  const honeypot = clean(payload.company); // hidden field; bots fill it in
+  const honeypot = clean(payload.company);
 
-  // Silently accept and drop obvious bots so they don't retry.
   if (honeypot) return json({ ok: true });
 
-  // Validation
   if (!name || name.length > 120) return json({ ok: false, error: 'Please enter your name.' }, 400);
   if (!isEmail(email)) return json({ ok: false, error: 'Please enter a valid email address.' }, 400);
   if (!message || message.length < 5) return json({ ok: false, error: 'Please enter a message.' }, 400);
   if (message.length > 5000) return json({ ok: false, error: 'That message is a bit too long.' }, 400);
 
-  if (!env.CF_ACCOUNT_ID || !env.CF_EMAIL_TOKEN || !env.CONTACT_TO || !env.CONTACT_FROM) {
+  if (!env.RESEND_API_KEY || !env.CONTACT_TO) {
     return json({ ok: false, error: 'Email is not configured yet.' }, 500);
   }
 
+  const fromName = env.CONTACT_FROM_NAME || 'AW Design & Foto';
+  const fromAddress = env.CONTACT_FROM || 'noreply@sambunker.com';
+  const toAddress = env.CONTACT_TO_NAME
+    ? `${env.CONTACT_TO_NAME} <${env.CONTACT_TO}>`
+    : env.CONTACT_TO;
+
   const body = {
-    to: env.CONTACT_TO_NAME
-      ? { address: env.CONTACT_TO, name: env.CONTACT_TO_NAME }
-      : env.CONTACT_TO,
-    from: { address: env.CONTACT_FROM, name: env.CONTACT_FROM_NAME || 'AW Design & Foto' },
-    reply_to: { address: email, name },
+    from: `${fromName} <${fromAddress}>`,
+    to: [toAddress],
+    reply_to: `${name} <${email}>`,
     subject: `New message from ${name} — AW Design & Foto`,
     text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
     html:
@@ -72,22 +71,19 @@ export async function onRequest({ request, env }) {
       `<p style="white-space:pre-wrap">${escapeHtml(message)}</p>`,
   };
 
-  const res = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT_ID}/email/sending/send`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${env.CF_EMAIL_TOKEN}`,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    }
-  );
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.RESEND_API_KEY}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
 
   const data = await res.json().catch(() => null);
 
-  if (!res.ok || !data?.success) {
-    console.error('Email send failed', res.status, JSON.stringify(data?.errors || ''));
+  if (!res.ok) {
+    console.error('Resend error', res.status, JSON.stringify(data));
     return json({ ok: false, error: 'Could not send right now. Please try again later.' }, 502);
   }
 
