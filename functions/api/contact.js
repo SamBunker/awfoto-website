@@ -83,8 +83,9 @@ export async function onRequest({ request, env }) {
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
-    console.error('Resend error', res.status, JSON.stringify(data));
-    return json({ ok: false, error: 'Could not send right now. Please try again later.' }, 502);
+    const detail = JSON.stringify(data);
+    console.error('Resend error', res.status, detail);
+    return json({ ok: false, error: `Resend ${res.status}: ${detail}` }, 502);
   }
 
   return json({ ok: true });
