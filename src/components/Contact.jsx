@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SOCIALS } from '../data/siteData';
 import { ArrowRight, ArrowUpRight } from './icons';
 import '../styles/Contact.css';
@@ -12,6 +12,33 @@ function Contact() {
   const [form, setForm] = useState(EMPTY);
   const [status, setStatus] = useState('idle'); // idle | sending | success | error
   const [error, setError] = useState('');
+  const tsRef = useRef(null);
+  const tsWidgetId = useRef(null);
+
+  useEffect(() => {
+    const render = () => {
+      if (!tsRef.current || tsWidgetId.current !== null) return;
+      tsWidgetId.current = window.turnstile.render(tsRef.current, {
+        sitekey: TURNSTILE_SITEKEY,
+        action: 'turnstile-spin-v1',
+        theme: 'dark',
+      });
+    };
+
+    if (window.turnstile) {
+      render();
+    } else {
+      const script = document.querySelector('script[src*="turnstile"]');
+      if (script) script.addEventListener('load', render);
+      return () => script?.removeEventListener('load', render);
+    }
+  }, []);
+
+  const resetTurnstile = () => {
+    if (window.turnstile && tsWidgetId.current !== null) {
+      window.turnstile.reset(tsWidgetId.current);
+    }
+  };
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
@@ -22,7 +49,9 @@ function Contact() {
     setError('');
 
     try {
-      const tsToken = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
+      const tsToken = (window.turnstile && tsWidgetId.current !== null)
+        ? window.turnstile.getResponse(tsWidgetId.current)
+        : document.querySelector('[name="cf-turnstile-response"]')?.value || '';
       if (!tsToken) {
         setStatus('error');
         setError('Please complete the security check.');
@@ -38,7 +67,7 @@ function Contact() {
       if (!tsData.success) {
         setStatus('error');
         setError('Security check failed. Please try again.');
-        if (window.turnstile) window.turnstile.reset();
+        resetTurnstile();
         return;
       }
 
@@ -52,7 +81,7 @@ function Contact() {
       if (res.ok && data.ok) {
         setStatus('success');
         setForm(EMPTY);
-        if (window.turnstile) window.turnstile.reset();
+        resetTurnstile();
       } else {
         setStatus('error');
         setError(data.error || 'Something went wrong. Please try again.');
@@ -137,12 +166,7 @@ function Contact() {
                 value={form.company} onChange={update('company')} />
             </div>
 
-            <div
-              className="cf-turnstile"
-              data-sitekey={TURNSTILE_SITEKEY}
-              data-action="turnstile-spin-v1"
-              data-theme="dark"
-            />
+            <div ref={tsRef} className="cf-turnstile" />
 
             {status === 'error' && <p className="contact-error" role="alert">{error}</p>}
 
