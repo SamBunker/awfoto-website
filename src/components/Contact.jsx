@@ -3,6 +3,9 @@ import { SOCIALS } from '../data/siteData';
 import { ArrowRight, ArrowUpRight } from './icons';
 import '../styles/Contact.css';
 
+const TURNSTILE_SITEKEY = '0x4AAAAAADsZRBjS3OQWWK60';
+const SITEVERIFY_URL = 'https://turnstile-siteverify-awfoto.samuelbunker.workers.dev';
+
 const EMPTY = { name: '', email: '', message: '', company: '' };
 
 function Contact() {
@@ -19,6 +22,26 @@ function Contact() {
     setError('');
 
     try {
+      const tsToken = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
+      if (!tsToken) {
+        setStatus('error');
+        setError('Please complete the security check.');
+        return;
+      }
+
+      const tsRes = await fetch(SITEVERIFY_URL, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ token: tsToken }),
+      });
+      const tsData = await tsRes.json().catch(() => ({}));
+      if (!tsData.success) {
+        setStatus('error');
+        setError('Security check failed. Please try again.');
+        if (window.turnstile) window.turnstile.reset();
+        return;
+      }
+
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -29,6 +52,7 @@ function Contact() {
       if (res.ok && data.ok) {
         setStatus('success');
         setForm(EMPTY);
+        if (window.turnstile) window.turnstile.reset();
       } else {
         setStatus('error');
         setError(data.error || 'Something went wrong. Please try again.');
@@ -112,6 +136,13 @@ function Contact() {
               <input id="cf-company" type="text" tabIndex={-1} autoComplete="off"
                 value={form.company} onChange={update('company')} />
             </div>
+
+            <div
+              className="cf-turnstile"
+              data-sitekey={TURNSTILE_SITEKEY}
+              data-action="turnstile-spin-v1"
+              data-theme="dark"
+            />
 
             {status === 'error' && <p className="contact-error" role="alert">{error}</p>}
 

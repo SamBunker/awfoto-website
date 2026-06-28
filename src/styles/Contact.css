@@ -183,6 +183,10 @@
   border-bottom-color: var(--teal);
 }
 
+.cf-turnstile {
+  margin-bottom: 1.25rem;
+}
+
 .contact-submit {
   margin-top: 0.6rem;
 }
