@@ -6,5 +6,11 @@
   "assets": {
     "directory": "./dist",
     "not_found_handling": "single-page-application"
+  },
+  "vars": {
+    "CONTACT_TO": "notleumas@gmail.com",
+    "CONTACT_TO_NAME": "Andrew Williams",
+    "CONTACT_FROM": "noreply@sambunker.com",
+    "CONTACT_FROM_NAME": "AW Design & Foto"
   }
 }
