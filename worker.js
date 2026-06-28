@@ -31,7 +31,10 @@ async function handleContact(request, env) {
   if (message.length > 5000) return json({ ok: false, error: 'That message is a bit too long.' }, 400);
 
   if (!env.RESEND_API_KEY || !env.CONTACT_TO) {
-    return json({ ok: false, error: 'Email is not configured yet.' }, 500);
+    return json({
+      ok: false,
+      error: `Not configured — RESEND_API_KEY present: ${!!env.RESEND_API_KEY}, CONTACT_TO present: ${!!env.CONTACT_TO}`,
+    }, 500);
   }
 
   const fromName = env.CONTACT_FROM_NAME || 'AW Design & Foto';
