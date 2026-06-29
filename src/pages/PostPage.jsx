@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getPost, getPostsByCategory, formatDate } from '../content/loader';
 import { getCategory } from '../content/categories';
@@ -8,12 +8,17 @@ import PostCard from '../components/PostCard';
 import NotFound from './NotFound';
 import '../styles/PostPage.css';
 
+const GALLERY_PAGE_SIZE = 18;
+
 function PostPage() {
   const { category, slug } = useParams();
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(GALLERY_PAGE_SIZE);
 
   const meta = getCategory(category);
   const post = getPost(category, slug);
+
+  useEffect(() => { setVisibleCount(GALLERY_PAGE_SIZE); }, [slug]);
 
   if (!meta || !post) return <NotFound />;
 
@@ -76,9 +81,14 @@ function PostPage() {
 
       {post.images?.length > 0 && (
         <div className="container post-gallery-wrap">
-          <h2 className="heading post-section-title">The Set</h2>
+          <div className="post-gallery-header">
+            <h2 className="heading post-section-title">The Set</h2>
+            <span className="post-gallery-count">
+              {Math.min(visibleCount, post.images.length)} / {post.images.length}
+            </span>
+          </div>
           <div className="post-gallery">
-            {post.images.map((src, i) => (
+            {post.images.slice(0, visibleCount).map((src, i) => (
               <button
                 key={src}
                 className="post-gallery-item"
@@ -89,6 +99,24 @@ function PostPage() {
               </button>
             ))}
           </div>
+          {visibleCount < post.images.length && (
+            <div className="post-gallery-load-more">
+              <button
+                className="load-more-btn"
+                onClick={() => setVisibleCount(v => Math.min(v + GALLERY_PAGE_SIZE, post.images.length))}
+              >
+                Load more images
+                <span className="load-more-remaining">
+                  {post.images.length - visibleCount} remaining
+                </span>
+              </button>
+            </div>
+          )}
+          <p className="post-gallery-quality-note">
+            Images shown here are reduced in quality so my website doesn&apos;t take forever
+            to load. If you&apos;d like to see any final full-resolution copies,{' '}
+            <Link to="/#contact">please contact me</Link>.
+          </p>
         </div>
       )}
 
