@@ -5,6 +5,7 @@ excerpt: Sixty seconds built to raise the hair on your arms — cut to the beat 
 cover: /most-recent-1.png
 video: https://www.youtube.com/embed/dQw4w9WgXcQ
 tags: [Hype Reel, Edit, Sports]
+draft: true
 ---
 
 A hype reel has one job: make you feel something in under a minute. Every cut,

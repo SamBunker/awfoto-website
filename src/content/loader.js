@@ -67,13 +67,15 @@ function coerce(v) {
 }
 
 function buildPosts() {
-  const posts = Object.entries(files).map(([path, raw]) => {
+  const posts = Object.entries(files)
+    .map(([path, raw]) => {
     const segments = path.replace('./', '').split('/');
     const category = segments[0];
     const slug = segments[segments.length - 1].replace(/\.md$/, '');
     const { data, body } = parseFrontmatter(raw);
 
     return {
+      draft: data.draft === true,
       slug,
       category,
       title: data.title || slug,
@@ -88,7 +90,9 @@ function buildPosts() {
       body,
       html: marked.parse(body),
     };
-  });
+    })
+    // Drafts are kept in the repo for reference but never rendered
+    .filter((p) => !p.draft);
 
   // Newest first
   return posts.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
